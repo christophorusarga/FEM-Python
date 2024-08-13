@@ -5,9 +5,9 @@ model = pyc.FeaModel('cylinder_with_load')
 
 # Step 2: Define the material properties (Carbon Fiber)
 carbon_fiber = pyc.Material('carbon_fiber')
-carbon_fiber.set_mech_props(young_mod=70e9,  # Young's Modulus in Pascals (Pa)
-                            poisson_ratio=0.1)  # Poisson's Ratio
-model.set_material(carbon_fiber)
+
+# The correct method signature requires both Young's Modulus and Poisson's Ratio
+carbon_fiber.set_mech_props(70e9, 0.1, 0.27)  # Young's Modulus in Pascals, Poisson's Ratio
 
 # Step 3: Create a part (the cylinder)
 part = model.create_part('cylinder')
@@ -20,6 +20,8 @@ part.create_cylinder(radius=radius, height=height)
 # Step 5: Mesh the part (discretize it into elements)
 part.set_mesh_size(0.1)  # Set mesh size to 0.1 meters
 part.generate_mesh()     # Generate the mesh
+
+model.set_matl(carbon_fiber, part)
 
 # Step 6: Define the boundary conditions
 # Fix the bottom face of the cylinder (simulate it being attached to the ground)
@@ -39,17 +41,3 @@ model.write_inp('cylinder_load.inp')
 # os.system('ccx cylinder_load')
 
 # Note: The actual running of CalculiX is done via command line. This line is an example.
-
-# Step 10: Post-process the results
-# You would normally use external tools like ParaView or built-in pycalculix methods
-# For instance, to read and plot displacement and stress:
-
-# displacement = model.read_nodal_displacement('cylinder', 'max')
-# stress = model.read_element_stress('cylinder', 'max')
-
-# print(f"Max displacement: {displacement} meters")
-# print(f"Max stress: {stress} Pascals")
-
-# To visualize, you might use:
-# model.plot_disp()
-# model.plot_stress()
